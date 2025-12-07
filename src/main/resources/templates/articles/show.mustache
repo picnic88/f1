@@ -2,15 +2,48 @@
 
 <div class="container p-5">
 
-    {{#article}} <div class="card" style="width: 100%;">
-        <div class="card-header">
-            게시글 번호: {{id}}
+    {{#article}}
+        <div class="card mb-5" style="width: 100%;">
+            <div class="card-header">
+                게시글 번호: {{id}}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{title}}</h5>
+                <p class="card-text">{{content}}</p>
+                <a href="/articles" class="btn btn-info">목록으로</a>
+            </div>
         </div>
+    {{/article}}
+
+    <div class="card mb-3">
+        <div class="card-header">댓글 리스트</div>
+        <ul class="list-group list-group-flush">
+            {{#comments}}
+                <li class="list-group-item">
+                    <b>{{user.nickname}}</b>: {{body}}
+                    <small class="text-muted float-end">{{createdDate}}</small>
+                </li>
+            {{/comments}}
+            {{^comments}}
+                <li class="list-group-item">작성된 댓글이 없습니다.</li>
+            {{/comments}}
+        </ul>
+    </div>
+
+    <div class="card">
+        <div class="card-header">댓글 쓰기</div>
         <div class="card-body">
-            <h5 class="card-title">{{title}}</h5> <p class="card-text">{{content}}</p> <a href="/articles/new" class="btn btn-primary">새 글 쓰기</a>
-            <a href="/articles" class="btn btn-info">목록으로</a>
+            {{#article}}
+                <form action="/articles/{{id}}/comments" method="post">
+                    <div class="mb-3">
+                        <textarea name="body" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">댓글 등록</button>
+                </form>
+            {{/article}}
         </div>
     </div>
-    {{/article}} </div>
+
+</div>
 
 {{>layouts/footer}}

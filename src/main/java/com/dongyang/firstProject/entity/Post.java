@@ -25,12 +25,12 @@ public class Post {
     @Column(nullable = false)
     private String writer; // 작성자 (닉네임이나 ID를 저장)
 
-    // User 객체와 직접 연결 (JPA 스타일)
+    // User 객체와 직접 연결
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime createdDate; // 등록일 (44페이지 참조)
+    private LocalDateTime createdDate; // 등록일
 
     @PrePersist
     public void prePersist() {

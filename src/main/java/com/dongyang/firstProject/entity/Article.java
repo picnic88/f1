@@ -16,7 +16,7 @@ public class Article {
     @Column
     private String content;
 
-    // 기본 생성자 (JPA 필수)
+    // 기본 생성자
     public Article() {}
 
     // 데이터를 넣을 때 쓸 생성자

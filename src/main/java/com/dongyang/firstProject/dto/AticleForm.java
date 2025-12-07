@@ -2,7 +2,7 @@ package com.dongyang.firstProject.dto;
 
 import com.dongyang.firstProject.entity.Article;
 
-public class AticleForm { // 클래스 이름 수정 (Aticle -> Article)
+public class AticleForm {
 
     private String title;
     private String content;
@@ -19,7 +19,7 @@ public class AticleForm { // 클래스 이름 수정 (Aticle -> Article)
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    // DTO -> Entity 변환 메서드 (핵심!)
+    // DTO에서 Entity 변환 메서드
     public Article toEntity() {
         return new Article(null, title, content);
     }
