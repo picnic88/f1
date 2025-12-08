@@ -5,8 +5,10 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.ArrayList;
 
 public interface ArticleRepository extends CrudRepository<Article, Long> {
-
-    // Iterable 대신 ArrayList(List의 일종)를 반환하도록 재정의
     @Override
     ArrayList<Article> findAll();
+
+    // boardType이 일치하는 것만 찾는 기능 추가
+    // JPA가 알아서 SQL을 만들어줌
+    ArrayList<Article> findByBoardType(String boardType);
 }

@@ -1,6 +1,6 @@
 package com.dongyang.firstProject.controller;
 
-import com.dongyang.firstProject.dto.AticleForm;
+import com.dongyang.firstProject.dto.ArticleForm;
 import com.dongyang.firstProject.entity.Article;
 import com.dongyang.firstProject.entity.Comment;
 import com.dongyang.firstProject.repository.ArticleRepository;
@@ -27,7 +27,7 @@ public class ArticleController {
 
     // 글 저장하기 (Create)
     @PostMapping("/articles/create")
-    public String createArticle(AticleForm form) { // DTO로 데이터 받기
+    public String createArticle(ArticleForm form) { // DTO로 데이터 받기
         // DTO를 Entity로 변환
         Article article = form.toEntity();
 

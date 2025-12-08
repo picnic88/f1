@@ -1,50 +1,41 @@
 package com.dongyang.firstProject.api;
 
-import com.dongyang.firstProject.dto.AticleForm;
+import com.dongyang.firstProject.dto.ArticleForm;
 import com.dongyang.firstProject.entity.Article;
 import com.dongyang.firstProject.repository.ArticleRepository;
-import com.dongyang.firstProject.service.CommentService; // 댓글 서비스 재사용
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-@RestController //데이터(JSON)를 반환
-@RequestMapping("/api/articles") //localhost:8081/api/articles
+@RestController
+@RequestMapping("/api/articles")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // 리액트(3000번 포트) 접속 허용
+@CrossOrigin(origins = "http://localhost:5173")
 public class ArticleApiController {
 
     private final ArticleRepository articleRepository;
-    private final CommentService commentService;
 
-    //게시글 목록 조회 (GET)
+    // 목록 조회 기능
     @GetMapping
-    public List<Article> index() {
-        return articleRepository.findAll();
+    public List<Article> index(@RequestParam(value = "boardType", required = false) String boardType) {
+        // 프론트가 "?boardType=NOTICE" 라고 물어봤다면
+        if (boardType != null) {
+            return articleRepository.findByBoardType(boardType); // 공지사항만 리턴
+        }
+        // 아무것도 안 물어봤으면
+        return articleRepository.findAll(); // 전체 다 리턴
     }
 
-    //게시글 단건 조회 (GET)
-    @GetMapping("/{id}")
-    public Article show(@PathVariable Long id) {
-        return articleRepository.findById(id).orElse(null);
-    }
-
-    //게시글 생성 (POST)
+    // 글 저장 (저장은 기존과 똑같지만, DTO에 boardType이 들어있어서 같이 저장됨)
     @PostMapping
-    public Article create(@RequestBody AticleForm dto) {
+    public Article create(@RequestBody ArticleForm dto) {
         Article article = dto.toEntity();
         return articleRepository.save(article);
     }
 
-    //게시글 삭제 (DELETE)
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        Article target = articleRepository.findById(id).orElse(null);
-        if (target != null) {
-            articleRepository.delete(target);
-            return "삭제 성공";
-        }
-        return "삭제 실패: 대상이 없습니다.";
+    // 단건 조회
+    @GetMapping("/{id}")
+    public Article show(@PathVariable Long id) {
+        return articleRepository.findById(id).orElse(null);
     }
 }

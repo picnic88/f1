@@ -11,7 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // 암호화 도구 등록 (JoinService에서 쓰는거)
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -20,19 +19,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf((csrf) -> csrf.disable())
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/join", "/joinProc", "/login", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/loginProc") //시큐리티가 처리함
-                        .usernameParameter("loginId")
-                        .defaultSuccessUrl("/")
-                        .permitAll()
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        // 모든 요청을 다 허용
+                        .anyRequest().permitAll()
                 );
+
+
         return http.build();
     }
 }
