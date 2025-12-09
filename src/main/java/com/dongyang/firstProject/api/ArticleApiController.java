@@ -4,29 +4,32 @@ import com.dongyang.firstProject.dto.ArticleForm;
 import com.dongyang.firstProject.entity.Article;
 import com.dongyang.firstProject.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.PUT})
 public class ArticleApiController {
 
     private final ArticleRepository articleRepository;
 
-    // 목록 조회 기능
+    // 목록 조회
     @GetMapping
-    public List<Article> index(@RequestParam(value = "boardType", required = false) String boardType) {
-        // 프론트가 "?boardType=NOTICE" 라고 물어봤다면
-        if (boardType != null) {
-            return articleRepository.findByBoardType(boardType); // 공지사항만 리턴
+    public List<Article> index(@RequestParam(value = "boardType", required = false) String boardType,
+                               @RequestParam(value = "author", required = false) String author) {
+        if (author != null) {
+            return articleRepository.findByAuthor(author); // 내 글만 조회
         }
-        // 아무것도 안 물어봤으면
-        return articleRepository.findAll(); // 전체 다 리턴
+        if (boardType != null) {
+            return articleRepository.findByBoardType(boardType);
+        }
+        return articleRepository.findAll();
     }
 
-    // 글 저장 (저장은 기존과 똑같지만, DTO에 boardType이 들어있어서 같이 저장됨)
+    // 글 생성
     @PostMapping
     public Article create(@RequestBody ArticleForm dto) {
         Article article = dto.toEntity();
@@ -37,5 +40,24 @@ public class ArticleApiController {
     @GetMapping("/{id}")
     public Article show(@PathVariable Long id) {
         return articleRepository.findById(id).orElse(null);
+    }
+
+    // 글 삭제 API
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Article> delete(@PathVariable Long id) {
+        Article target = articleRepository.findById(id).orElse(null);
+        if (target == null) return ResponseEntity.badRequest().build();
+        articleRepository.delete(target);
+        return ResponseEntity.ok().build();
+    }
+
+    // 글 수정 API
+    @PatchMapping("/{id}")
+    public ResponseEntity<Article> update(@PathVariable Long id, @RequestBody ArticleForm dto) {
+        Article target = articleRepository.findById(id).orElse(null);
+        if (target == null) return ResponseEntity.badRequest().build();
+        target.patch(dto.getTitle(), dto.getContent());
+        Article updated = articleRepository.save(target);
+        return ResponseEntity.ok(updated);
     }
 }

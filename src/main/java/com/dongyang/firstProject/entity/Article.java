@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter // 수정(Setter) 기능 추가
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,13 +22,20 @@ public class Article {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private String boardType; // DB 테이블에 'board_type' 칸 생성
+    private String boardType; // NOTICE or BOARD
+
+    private String author; // 작성자(아이디) 저장하는 칸
 
     private LocalDateTime createdDate;
 
     @PrePersist
     public void createDate() {
         this.createdDate = LocalDateTime.now();
+    }
+
+    // 글 수정 메서드
+    public void patch(String title, String content) {
+        if(title != null) this.title = title;
+        if(content != null) this.content = content;
     }
 }

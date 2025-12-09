@@ -8,17 +8,17 @@ import lombok.*;
 @Getter @Setter
 @ToString
 public class ArticleForm {
-
     private String title;
     private String content;
-    private String boardType; //게시판 종류 필드 추가
+    private String boardType;
+    private String author; //작성자 추가
 
-    // DTO -> Entity 변환 메서드
     public Article toEntity() {
         return Article.builder()
                 .title(title)
                 .content(content)
-                .boardType(boardType) // DB에 저장할 때도 이 종류를 같이 넣어줌
+                .boardType(boardType)
+                .author(author) //엔티티로 전달
                 .build();
     }
 }
