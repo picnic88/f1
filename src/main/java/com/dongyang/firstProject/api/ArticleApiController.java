@@ -6,6 +6,7 @@ import com.dongyang.firstProject.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,15 +17,15 @@ public class ArticleApiController {
 
     private final ArticleRepository articleRepository;
 
-    // 목록 조회
+    //목록 조회 (필터링 포함)
     @GetMapping
     public List<Article> index(@RequestParam(value = "boardType", required = false) String boardType,
                                @RequestParam(value = "author", required = false) String author) {
         if (author != null) {
-            return articleRepository.findByAuthor(author); // 내 글만 조회
+            return articleRepository.findByAuthor(author); // 내 글만 보기
         }
         if (boardType != null) {
-            return articleRepository.findByBoardType(boardType);
+            return articleRepository.findByBoardType(boardType); // 게시판 종류별 보기
         }
         return articleRepository.findAll();
     }
@@ -36,13 +37,13 @@ public class ArticleApiController {
         return articleRepository.save(article);
     }
 
-    // 단건 조회
+    //단건 조회 (상세보기)
     @GetMapping("/{id}")
     public Article show(@PathVariable Long id) {
         return articleRepository.findById(id).orElse(null);
     }
 
-    // 글 삭제 API
+    // 글 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Article> delete(@PathVariable Long id) {
         Article target = articleRepository.findById(id).orElse(null);
@@ -51,12 +52,16 @@ public class ArticleApiController {
         return ResponseEntity.ok().build();
     }
 
-    // 글 수정 API
+    // 글 수정 (ArticleEdit.tsx와 연결됨)
     @PatchMapping("/{id}")
     public ResponseEntity<Article> update(@PathVariable Long id, @RequestBody ArticleForm dto) {
         Article target = articleRepository.findById(id).orElse(null);
+
         if (target == null) return ResponseEntity.badRequest().build();
+
+        // 기존 데이터에 새 내용을 덮어씌움 (Patch)
         target.patch(dto.getTitle(), dto.getContent());
+
         Article updated = articleRepository.save(target);
         return ResponseEntity.ok(updated);
     }
